@@ -11,54 +11,62 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	 terminate/2, code_change/3]).
 
+%% testing
+-export([handle_announce/3]).
+
 start_link(Port) ->
   gen_server:start_link({local, ?MODULE}, ?MODULE, [Port], []).
 
 init([Port]) ->
   process_flag(trap_exit, true),
   io:format("~p (~p) starting...~n", [?MODULE, self()]),
+  DbMod = db,
   mochiweb_http:start([{port, Port},
-		       {loop, fun(Req) -> dispatch_requests(Req) end}]),
+		       {loop, fun(Req) -> dispatch_requests(Req, DbMod) end}]),
   erlang:monitor(process, mochiweb_http),
   {ok, [45, 30]}.
 
 stop() ->
 	mochiweb_http:stop(). 
 
-dispatch_requests(HttpRequest) ->
+dispatch_requests(HttpRequest, DbMod) ->
 	{Action,_,_} = mochiweb_util:urlsplit_path(HttpRequest:get(path)),
-	handle(Action, HttpRequest).
+	handle(Action, HttpRequest, DbMod).
 
-handle("/announce", HttpRequest) ->
-		ClientIp = HttpRequest:get(peer),
-		Req = parse_req(ClientIp, HttpRequest:parse_qs()),
+handle_announce(ClientIp, HttpParams, DbMod) ->
+		Req = parse_req(ClientIp, HttpParams),
 		Peer = Req#req.peer,
-		print_req(Req),
+		% print_req(Req),
 		
 		% store announce data (async call, returns immediately - does not block waiting for response)
-		db:announce(Peer),
+		DbMod:announce(Peer),
+		
 		{InfoHash, _PeerId} = Peer#peer.peer_key,
 		
 		%% load stats and peer list
 		%% TODO: both this calls should NOT go straight to the database,
 		%% but invoke one or two specific servers. 
-		{torrent_stats, Complete, Incomplete} = db:torrent_stats(InfoHash),
-		{torrent_peers, Peers} = db:torrent_peers(InfoHash, Req#req.numwant),
+		{torrent_stats, Complete, Incomplete} = DbMod:torrent_stats(InfoHash),
+		{torrent_peers, Peers} = DbMod:torrent_peers(InfoHash, Req#req.numwant),
 		
-		io:format("Stats: complete:~p incomplete: ~p.~n",[Complete,Incomplete]),
+		%-% io:format("Stats: complete:~p incomplete: ~p.~n",[Complete,Incomplete]),
 		PeerStr = peers_str(Peers,[]),
 		Response = build_respose(10, 20, <<"123456">>, Complete, Incomplete, PeerStr),
 		
-		io:format("Response ~s~n----~n----~n",[Response]),
-		HttpRequest:respond({200, [{"Content-Type", "text/plain"},{"Content-Length", size(Response)}], Response});
+		%-% io:format("Response ~s~n----~n----~n",[Response]),
+		{200, [{"Content-Type", "text/plain"},{"Content-Length", size(Response)}], Response}.
 
-handle(_Unknown, Req) ->
+handle("/announce", HttpRequest, DbMod) ->
+		ClientIp = HttpRequest:get(peer),
+		HttpRequest:respond(handle_announce(ClientIp, HttpRequest:parse_qs(), DbMod));
+
+handle(_Unknown, Req, _DbMod) ->
 	Req:respond({404, [{"Content-Type","text/plain"}], "404"}).
 
 peers_str([], Rt) ->
 	Rt;
 peers_str([Peer|Peers], Rt) ->
-	io:format("Peer: ~p to list ~p~n", [Peer,binary_to_list(Peer)]),
+	%-% io:format("Peer: ~p to list ~p~n", [Peer,binary_to_list(Peer)]),
 	peers_str(Peers, binary_to_list(Peer)++Rt).
 
 build_respose(Interval, MinInterval, _TrackerId, Complete, Incomplete, Peers) ->
@@ -72,7 +80,8 @@ binary_ip({ok,{A,B,C,D}}, Port) ->
 
 print_req(Req) ->
 	#peer{peer_key={Hash,Id}, last_event=Event, uploaded=Up, downloaded=Down, left=Left} = Req#req.peer,
-	io:format("REQUEST: event:~p Torr:~s Peer:~s  up:~p down:~p left:~p.~n", [Event, hex:bin_to_hexstr(Hash), hex:bin_to_hexstr(Id), Up, Down, Left]).
+	io:format("REQUEST: event:~p Torr:~s Peer:~s  up:~p down:~p left:~p.~n",
+			  [Event, hex:bin_to_hexstr(Hash), hex:bin_to_hexstr(Id), Up, Down, Left]).
 
 parse_req(Ip, HttpParams) ->
 	#req{

@@ -2,7 +2,7 @@
 .SUFFIXES: .erl .beam .yrl
 
 .erl.beam:
-	erlc -W $<
+	erlc +debug_info -W $<
 
 .yrl.erl:
 	erlc -W $<
@@ -10,8 +10,8 @@
 ERL = erl -boot start_clean 
 
 # Edit the lines below
-MODS = peasy_web db db_setup peasy_supervisor peasy hex
-       
+MODS = peasy_web db db_setup peasy_supervisor peasy hex \
+       loadtest peasy_web_test mock
 all: compile 
 
 compile: ${MODS:%=%.beam}
