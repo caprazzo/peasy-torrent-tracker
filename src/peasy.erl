@@ -1,5 +1,6 @@
 -module(peasy).
 
+%% Application root
 -behaviour(application).
 -import(db_setup).
 -export([start/0, start/2, stop/1, stop/0]).
