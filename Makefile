@@ -8,6 +8,9 @@ EBIN_MOCHIWEB = ./3rd/mochiweb/ebin
 ESRC = ./src/main
 ESRC_TEST = ./src/test
 
+BIN = ./bin
+RELEASE = ./release
+CONFIG = ./config
 INC = ./include 
 CC = erlc -I ${INC} -W0
 
@@ -26,13 +29,21 @@ all: dirs mochiweb ${TARGET} test
 test: ${TARGET_TEST}
 	erl -pa $(EBIN) -pa $(EBIN_TEST) -noshell -s peasy_web_test test -s init stop
 
+release: all test
+	mkdir -p $(RELEASE)
+	mkdir -p $(RELEASE)/log
+	cp -R $(EBIN) $(RELEASE)/
+	cp -R $(CONFIG) $(RELEASE)/
+	cp -R $(BIN) $(RELEASE)/
+	cp -R $(EBIN_MOCHIWEB) $(RELEASE)/ebin/mochiweb
+	
 # run development version
 run: ${TARGET}
-	erl -boot start_sasl -config config/cfg_dev -pa $(EBIN) -pa $(EBIN_MOCHIWEB) -s peasy start
+	erl -boot start_sasl -config  $(CONFIG)/cfg_dev -pa $(EBIN) -pa $(EBIN_MOCHIWEB) -s peasy start
 	
 # run qa
 run_qa: ${TARGET}
-	erl -boot start_sasl -config config/cfg_qa -detached -pa $(EBIN) -pa $(EBIN_MOCHIWEB) -s peasy start
+	erl -boot start_sasl -config  $(CONFIG)/cfg_qa -detached -pa $(EBIN) -pa $(EBIN_MOCHIWEB) -s peasy start
 
 docs:
 	erl -noshell -s edoc files ${MODS:%=%.erl} -s init stop
@@ -56,3 +67,4 @@ mochiweb:
 
 clean:	
 	rm -rf $(EBIN)/*.beam $(EBIN_TEST)/*.beam erl_crash.dump
+	rm -rf $(RELEASE)
