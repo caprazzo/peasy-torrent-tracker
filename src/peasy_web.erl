@@ -77,6 +77,10 @@ build_respose(Interval, MinInterval, _TrackerId, Complete, Incomplete, Peers) ->
 %% as it
 binary_ip({ok,{A,B,C,D}}, Port) ->
 	<<A:8,B:8,C:8,D:8,Port:16>>.
+  
+
+    
+
 
 print_req(Req) ->
 	#peer{peer_key={Hash,Id}, last_event=Event, uploaded=Up, downloaded=Down, left=Left} = Req#req.peer,
