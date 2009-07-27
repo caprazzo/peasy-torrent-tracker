@@ -38,13 +38,15 @@ init([Port]) ->
 dispatch_requests(HttpRequest, RestRegex) ->
 	{Action,_,_} = mochiweb_util:urlsplit_path(HttpRequest:get(path)),
 	{ok, Parts} = re:split(Action, RestRegex),
-	handle(Parts, HttpRequest).
+	Response = handle(Parts, HttpRequest),
+	HttpRequest:respond(Response).
 
 handle(["torrents", InfoHash]) ->
 	{ok, Complete, Incomplete, Downloaded} = torrent_info:status(InfoHash),
-	HttpRequest:respond(....);
+	Response = {200, [{"Content-Type","text/html"}], "cazzi"},
+	Response.
 
 handle(["torrents"]) ->
 	{ok, Stats} = torrent_info:status(all),
-	HttpRequest:respond(...).
-
+	Response = {200, [{"Content-Type","text/html"}], "cazzi"},
+	Response.

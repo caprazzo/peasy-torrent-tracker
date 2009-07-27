@@ -1,6 +1,8 @@
 -module(torrent_info).
 
 -behviour(gen_server).
+%% @doc torrent_info is a local gen_server read torrent
+%% statistics (complete,incomplete,downloaded).
 
 %% API
 -export([start_link/1, stop/0]).
@@ -10,7 +12,7 @@
 terminate/2, code_change/3]).
 
 start_link() ->
-	gen_server:start_link({global, ?MODULE}, ?MODULE, [Port], []).
+	gen_server:start_link({local, ?MODULE}, ?MODULE, [Port], []).
 
 init([]) ->
   process_flag(trap_exit, true),
@@ -18,7 +20,7 @@ init([]) ->
   {ok, []}.
 
 info(InfoHash) ->
-	gen_server:call({global, ?MODULE}, {info, InfoHash})).
+	gen_server:call({local, ?MODULE}, {info, InfoHash})).
 
 handle_call({info, InfoHash}, _From, State) ->
 	db:torrent_stats(InfoHash).
