@@ -11,6 +11,8 @@
 %% GET /torrents/<InfoHash>
 %% {info_hash=InfoHash, complete:12345, incomplete:53214, downloaded:459}
 
+%% GET /torrents
+%% [{info_hash=<infoHash>, complete:12345, incomplete:53214, downloaded:459}]
 %% API
 %%-export([start_link/1, stop/0]).
  
@@ -35,9 +37,13 @@ init([Port]) ->
 dispatch_requests(HttpRequest, RestRegex) ->
 	{Action,_,_} = mochiweb_util:urlsplit_path(HttpRequest:get(path)),
 	{ok, Parts} = re:split(Action, RestRegex),
-	handle(Parts).
+	handle(Parts, HttpRequest).
 
 handle(["torrents", InfoHash]) ->
-	{ok, Complete, Incomplete, Downloaded}=Result = torrent_info:info(InfoHash, {complete, incomplete, downloaded}),
-	Result.
+	{ok, Complete, Incomplete, Downloaded} = torrent_info:status(InfoHash),
+	HttpRequest:respond(....);
+
+handle(["torrents"]) ->
+	{ok, Stats} = torrent_info:status(all),
+	HttpRequest:respond(...).
 
