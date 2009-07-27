@@ -50,3 +50,7 @@ handle(["torrents"]) ->
 	{ok, Stats} = torrent_info:status(all),
 	Response = {200, [{"Content-Type","text/html"}], "cazzi"},
 	Response.
+
+terminate(_Reason, _State) ->
+  mochiweb_http:stop(),
+  ok.

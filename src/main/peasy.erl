@@ -16,7 +16,7 @@ start() ->
 
 start(_Type, _Args) ->
 	peasy_supervisor:start_link(_Args),
-	gen_event:add_sup_handler({local, announce_manager}, db_announce_handler, []).
+	gen_event:add_handler({local, announce_manager}, db_announce_handler, []).
 
 stop() ->
 	application:stop(?MODULE).

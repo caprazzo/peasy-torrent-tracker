@@ -19,7 +19,6 @@ start_link(Port) ->
 
 init([Port]) ->
 	process_flag(trap_exit, true),
-	gen_event:start_link({local, announce_manager}),
 	io:format("~p (~p) starting...~n", [?MODULE, self()]),
 	InfoMod = torrent_info,
 	mochiweb_http:start([{port, Port},
