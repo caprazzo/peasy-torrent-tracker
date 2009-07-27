@@ -8,6 +8,8 @@ init(_Args) ->
 
 handle_event({announce, Peer}, State) ->
 	io:format("Db Event announce/~p.~n", [Peer]),
+	%% write announce to db:
+	db:announce(Peer),
 	{ok,State}.
 
 terminate(_Args, _State) ->
