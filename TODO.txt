@@ -1,0 +1,47 @@
+
+
+REST API
+
+The tracker database can be accesed via a http REST interface,
+separate from the tracker interface.
+
+GET /torrents/<InfoHash>/complete
+{complete:12345}
+
+GET /torrents/<InfoHash>/incomplete
+{incomplete:53214}
+
+GET /torrents/<InfoHash>/downloaded
+{downloaded:459}
+
+GET /torrents/<InfoHash>/
+{complete:12345, incomplete:53214, downloaded:459}
+
+
+Architecture
+
+-	tracker_http - front service implementing the http tracker api as per
+	http://wiki.theory.org/BitTorrentSpecification.
+	
+	It handles two kind of requests:
+	
+	/announce?info_hash=<tracked_torrent>&peer_id=<client id>&<...>
+		A bittorrent client will hit this url to 
+			- update the tracker view of client status in relation to tracked_torrent
+			- ask for updated stats about tracked_torrent
+			- ask for a list of peers
+		
+		The three operations are managed independently.
+			
+			-	a global event {announce, Peer} is raised. Installed
+				event handlers could use this data to update a database.
+			
+			-	torrent_stats service is asked complete/incomplete count for
+				tracked_torrent
+				
+			-	torrent_peers service is asked to produce
+				a list of peers in binary format
+								
+	/scrape
+
+
