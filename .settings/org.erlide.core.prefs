@@ -1,9 +1,9 @@
-#Wed Jul 22 17:00:16 BST 2009
+#Fri Jul 24 22:02:59 BST 2009
 backend_version=R12B
 eclipse.preferences.version=1
 external_includes=
 external_modules=
 include_dirs=include
 output_dir=ebin
-source_dirs=src
+source_dirs=src/main src/test
 use_pathz=false

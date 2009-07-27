@@ -27,7 +27,8 @@ all: dirs mochiweb ${TARGET} test
 	cp peasy.app $(EBIN)
 	
 test: ${TARGET_TEST}
-	erl -pa $(EBIN) -pa $(EBIN_TEST) -noshell -s peasy_web_test test -s init stop
+	@echo Running test suite...
+	@erl -pa $(EBIN) -pa $(EBIN_TEST) -noshell -s all_tests test -s init stop
 
 release: all test
 	mkdir -p $(RELEASE)
@@ -58,12 +59,13 @@ $(EBIN)/%.beam: $(ESRC)/%.erl
 
 $(EBIN_TEST)/%.beam: $(ESRC_TEST)/%.erl
 	@echo "Compiling test $< ... "
-	@$(CC) -o $(EBIN_TEST) $<
+	@$(CC) +debug_info -o $(EBIN_TEST) $<
 	
 # remove all the code
 
 mochiweb:
-	cd 3rd/mochiweb && make
+	@echo Building mochiweb...
+	@cd 3rd/mochiweb && make
 
 clean:	
 	rm -rf $(EBIN)/*.beam $(EBIN_TEST)/*.beam erl_crash.dump
