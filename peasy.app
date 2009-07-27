@@ -5,4 +5,4 @@
 	{registered, [peasy_web, db]},
 	{applications, [kernel, stdlib, mnesia]},
 	{env, []},
-	{mod, {peasy, 8080}}]}.
+	{mod, {peasy, [8080, 9090]}}]}.

@@ -25,7 +25,7 @@
 -export([init/1, handle_cast/2, handle_call/3, handle_info/2,
 	 terminate/2, code_change/3]).
 
--export([announce/1, torrent_peers/2, torrent_stats/1, dump/0]).
+-export([announce/1, torrent_peers/2, torrent_status/1, dump/0]).
 
 start_link() ->
 	gen_server:start_link({global, ?MODULE}, ?MODULE, [], []).
@@ -46,8 +46,8 @@ announce(Peer) ->
 torrent_peers(InfoHash, Num) ->
 	gen_server:call({global, ?MODULE}, {peer_list, InfoHash, Num}).
 
-torrent_stats(InfoHash) ->
-	gen_server:call({global, ?MODULE}, {stats, InfoHash}).
+torrent_status(InfoHash) ->
+	gen_server:call({global, ?MODULE}, {status, InfoHash}).
 
 %% Handle announce calls asynchronously.
 handle_cast({announce, Peer}, _State) ->
@@ -57,14 +57,14 @@ handle_cast({announce, Peer}, _State) ->
 handle_cast(stop, State) ->
   {stop, normal, State}.
 
-handle_call({stats, InfoHash}, _From, _State) ->
+handle_call({status, InfoHash}, _From, _State) ->
 	F = fun() -> mnesia:read({torrent, InfoHash}) end,
 	case mnesia:transaction(F) of
 		{atomic, []} ->
 			{reply, {torrent_stats,0,0}, _State};
 		
-		{atomic,[#torrent{complete=Complete, incomplete=Incomplete}]} ->
-			{reply, {torrent_stats, Complete, Incomplete}, _State}
+		{atomic,[#torrent{complete=Complete, incomplete=Incomplete, downloaded=Downloaded}]} ->
+			{reply, {torrent_status, Complete, Incomplete, Downloaded}, _State}
 	end;
 handle_call({peer_list, InfoHash, _Num}, _From, _State) ->
 	Q = qlc:q([IpPort || #peer{peer_key={Hash,_},ip_port=IpPort}<-mnesia:table(peer), Hash=:=InfoHash]),

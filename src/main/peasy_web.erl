@@ -18,11 +18,12 @@ start_link(Port) ->
   gen_server:start_link({local, ?MODULE}, ?MODULE, [Port], []).
 
 init([Port]) ->
-  process_flag(trap_exit, true),
-  io:format("~p (~p) starting...~n", [?MODULE, self()]),
-  DbMod = db,
-  mochiweb_http:start([{port, Port},
-		       {loop, fun(Req) -> dispatch_requests(Req, {10,10,DbMod}) end}]),
+	process_flag(trap_exit, true),
+	gen_event:start_link({local, announce_manager}),
+	io:format("~p (~p) starting...~n", [?MODULE, self()]),
+	InfoMod = torrent_info,
+	mochiweb_http:start([{port, Port},
+		       {loop, fun(Req) -> dispatch_requests(Req, {10,10, InfoMod}) end}]),
   erlang:monitor(process, mochiweb_http),
   {ok, [45, 30]}.
 
@@ -33,27 +34,20 @@ dispatch_requests(HttpRequest, Conf) ->
 	{Action,_,_} = mochiweb_util:urlsplit_path(HttpRequest:get(path)),
 	handle(Action, HttpRequest, Conf).
 
-handle_announce(ClientIp, HttpParams, {Interval, MinInterval,DbMod}) ->
+handle_announce(ClientIp, HttpParams, {Interval, MinInterval, InfoMod}) ->
 		Req = parse_req(ClientIp, HttpParams),
 		Peer = Req#req.peer,
-		% print_req(Req),
-		
-		% store announce data (async call, returns immediately - does not block waiting for response)
-		DbMod:announce(Peer),
+		%gen_event:notify({local, announce_manager}, {announce, Peer}),
 		
 		{InfoHash, _PeerId} = Peer#peer.peer_key,
 		
 		%% load stats and peer list
-		%% TODO: both this calls should NOT go straight to the database,
-		%% but invoke one or two specific servers. 
-		{torrent_stats, Complete, Incomplete} = DbMod:torrent_stats(InfoHash),
-		{torrent_peers, Peers} = DbMod:torrent_peers(InfoHash, Req#req.numwant),
+		{torrent_status, Complete, Incomplete, _Downloaded} = InfoMod:status(InfoHash),
+		{torrent_peers, Peers} = InfoMod:peers(InfoHash, Req#req.numwant),
 		
-		%-% io:format("Stats: complete:~p incomplete: ~p.~n",[Complete,Incomplete]),
 		PeerStr = peers_str(Peers,[]),
 		Response = build_respose(Interval, MinInterval, <<"123456">>, Complete, Incomplete, PeerStr),
 		
-		%-% io:format("Response ~s~n----~n----~n",[Response]),
 		{200, [{"Content-Type", "text/plain"},{"Content-Length", size(Response)}], Response}.
 
 handle("/announce", HttpRequest, Conf) ->
@@ -74,7 +68,6 @@ build_respose(Interval, MinInterval, _TrackerId, Complete, Incomplete, Peers) ->
 			  [Complete,Incomplete,Interval,MinInterval,length(Peers), Peers]).
 
 %% packs ip and port in a 6-byte binary (4 ip, 2 port)
-%% as it
 binary_ip({ok,{A,B,C,D}}, Port) ->
 	<<A:8,B:8,C:8,D:8,Port:16>>.
   
@@ -138,10 +131,7 @@ handle_call(_Request, _From, State) ->
   {reply, Reply, State}.
 
 handle_cast(stop, State) ->
-  {stop, normal, State};
-
-handle_cast(_Msg, State) ->
-  {noreply, State}.
+  {stop, normal, State}.
 
 handle_info({'DOWN', _, _, {mochiweb_http, _}, _}, State) ->
   {stop, normal, State};
