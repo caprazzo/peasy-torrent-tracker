@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# Most of this file was taken from the ejabberd project and then changed
+#  until it matched what we had as a goal
+
+NODE=peasy
+HOST=localhost
+
+PATHS="%%%PATHS%%%"
+CONFIGFILE=%%%CONFIGFILE%%%
+ERL_FLAGS=%%%ERL_FLAGS%%%
+
+start () {
+    erl ${ERL_FLAGS} -sname ${NODE}@${HOST} ${PATHS} \
+	-config ${CONFIGFILE} -noshell -noinput -detached \
+	-s peasy start -cookie peasy
+}
+
+debug () {
+    erl -sname debug${NODE}@${HOST} \
+	-pa ${BEAMDIR} \
+	-remsh ${NODE}@${HOST}
+}
+
+ctl () {
+    erl -noinput -sname etorrentctl@${HOST} \
+	-pa ${BEAMDIR} \
+	-s peasy_ctl start ${NODE}@${HOST} $@
+}
+
+usage () {
+    echo "Usage: $0 {start|stop|debug}"
+}
+
+[ $# -lt 1 ] && usage
+
+case $1 in
+    start) start;;
+    debug) debug;;
+    *) ctl $@;;
+esac

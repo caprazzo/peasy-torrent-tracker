@@ -1,0 +1,318 @@
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,sasl_safe_sup}
+             started: [{pid,<0.37.0>},
+                       {name,alarm_handler},
+                       {mfa,{alarm_handler,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,sasl_safe_sup}
+             started: [{pid,<0.38.0>},
+                       {name,overload},
+                       {mfa,{overload,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,sasl_sup}
+             started: [{pid,<0.36.0>},
+                       {name,sasl_safe_sup},
+                       {mfa,
+                           {supervisor,start_link,
+                               [{local,sasl_safe_sup},sasl,safe]}},
+                       {restart_type,permanent},
+                       {shutdown,infinity},
+                       {child_type,supervisor}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,sasl_sup}
+             started: [{pid,<0.39.0>},
+                       {name,release_handler},
+                       {mfa,{release_handler,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+         application: sasl
+          started_at: nonode@nohost
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,kernel_safe_sup}
+             started: [{pid,<0.45.0>},
+                       {name,dets_sup},
+                       {mfa,{dets_sup,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,1000},
+                       {child_type,supervisor}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,kernel_safe_sup}
+             started: [{pid,<0.46.0>},
+                       {name,dets},
+                       {mfa,{dets_server,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,mnesia_sup}
+             started: [{pid,<0.54.0>},
+                       {name,mnesia_event},
+                       {mfa,{mnesia_sup,start_event,[]}},
+                       {restart_type,permanent},
+                       {shutdown,30000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,mnesia_kernel_sup}
+             started: [{pid,<0.56.0>},
+                       {name,mnesia_monitor},
+                       {mfa,{mnesia_monitor,start,[]}},
+                       {restart_type,permanent},
+                       {shutdown,3000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,mnesia_kernel_sup}
+             started: [{pid,<0.57.0>},
+                       {name,mnesia_subscr},
+                       {mfa,{mnesia_subscr,start,[]}},
+                       {restart_type,permanent},
+                       {shutdown,3000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,mnesia_kernel_sup}
+             started: [{pid,<0.58.0>},
+                       {name,mnesia_locker},
+                       {mfa,{mnesia_locker,start,[]}},
+                       {restart_type,permanent},
+                       {shutdown,3000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,mnesia_kernel_sup}
+             started: [{pid,<0.59.0>},
+                       {name,mnesia_recover},
+                       {mfa,{mnesia_recover,start,[]}},
+                       {restart_type,permanent},
+                       {shutdown,180000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,kernel_safe_sup}
+             started: [{pid,<0.64.0>},
+                       {name,disk_log_sup},
+                       {mfa,{disk_log_sup,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,1000},
+                       {child_type,supervisor}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,kernel_safe_sup}
+             started: [{pid,<0.65.0>},
+                       {name,disk_log_server},
+                       {mfa,{disk_log_server,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,2000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,kernel_safe_sup}
+             started: [{pid,<0.76.0>},
+                       {name,timer_server},
+                       {mfa,{timer,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,1000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,mnesia_kernel_sup}
+             started: [{pid,<0.60.0>},
+                       {name,mnesia_tm},
+                       {mfa,{mnesia_tm,start,[]}},
+                       {restart_type,permanent},
+                       {shutdown,30000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,mnesia_kernel_sup}
+             started: [{pid,<0.77.0>},
+                       {name,mnesia_checkpoint_sup},
+                       {mfa,{mnesia_checkpoint_sup,start,[]}},
+                       {restart_type,permanent},
+                       {shutdown,infinity},
+                       {child_type,supervisor}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,mnesia_kernel_sup}
+             started: [{pid,<0.78.0>},
+                       {name,mnesia_snmp_sup},
+                       {mfa,{mnesia_snmp_sup,start,[]}},
+                       {restart_type,permanent},
+                       {shutdown,infinity},
+                       {child_type,supervisor}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,mnesia_kernel_sup}
+             started: [{pid,<0.79.0>},
+                       {name,mnesia_controller},
+                       {mfa,{mnesia_controller,start,[]}},
+                       {restart_type,permanent},
+                       {shutdown,3000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,mnesia_kernel_sup}
+             started: [{pid,<0.80.0>},
+                       {name,mnesia_late_loader},
+                       {mfa,{mnesia_late_loader,start,[]}},
+                       {restart_type,permanent},
+                       {shutdown,3000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,mnesia_sup}
+             started: [{pid,<0.55.0>},
+                       {name,mnesia_kernel_sup},
+                       {mfa,{mnesia_kernel_sup,start,[]}},
+                       {restart_type,permanent},
+                       {shutdown,infinity},
+                       {child_type,supervisor}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+         application: mnesia
+          started_at: nonode@nohost
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,inet_gethost_native_sup}
+             started: [{pid,<0.92.0>},{mfa,{inet_gethost_native,init,[[]]}}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,kernel_safe_sup}
+             started: [{pid,<0.91.0>},
+                       {name,inet_gethost_native_sup},
+                       {mfa,{inet_gethost_native,start_link,[]}},
+                       {restart_type,temporary},
+                       {shutdown,1000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,peasy_supervisor}
+             started: [{pid,<0.89.0>},
+                       {name,peasy_web},
+                       {mfa,{peasy_web,start_link,[8080]}},
+                       {restart_type,permanent},
+                       {shutdown,5000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,peasy_supervisor}
+             started: [{pid,<0.94.0>},
+                       {name,db},
+                       {mfa,{db,start_link,[]}},
+                       {restart_type,permanent},
+                       {shutdown,5000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,peasy_supervisor}
+             started: [{pid,<0.95.0>},
+                       {name,rest_interface},
+                       {mfa,{rest_interface,start_link,[9090]}},
+                       {restart_type,permanent},
+                       {shutdown,5000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+          supervisor: {local,peasy_supervisor}
+             started: [{pid,<0.98.0>},
+                       {name,announce_manager},
+                       {mfa,{gen_event,start_link,[{local,announce_manager}]}},
+                       {restart_type,permanent},
+                       {shutdown,5000},
+                       {child_type,worker}]
+
+=PROGRESS REPORT==== 28-Jul-2009::20:19:01 ===
+         application: peasy
+          started_at: nonode@nohost
+
+=CRASH REPORT==== 28-Jul-2009::20:19:58 ===
+  crasher:
+    initial call: rb:init/1
+    pid: <0.101.0>
+    registered_name: []
+    exception exit: {badarg,[{erlang,'++',[logs,"/"]},
+                             {rb,init,1},
+                             {gen_server,init_it,6},
+                             {proc_lib,init_p_do_apply,3}]}
+      in function  gen_server:init_it/6
+    ancestors: [sasl_sup,<0.33.0>]
+    messages: []
+    links: [<0.35.0>]
+    dictionary: []
+    trap_exit: true
+    status: running
+    heap_size: 377
+    stack_size: 24
+    reductions: 123
+  neighbours:
+
+=CRASH REPORT==== 28-Jul-2009::20:20:22 ===
+  crasher:
+    initial call: rb:init/1
+    pid: <0.105.0>
+    registered_name: []
+    exception exit: "cannot locate report directory"
+      in function  gen_server:init_it/6
+    ancestors: [sasl_sup,<0.33.0>]
+    messages: []
+    links: [<0.35.0>]
+    dictionary: []
+    trap_exit: true
+    status: running
+    heap_size: 233
+    stack_size: 24
+    reductions: 109
+  neighbours:
+
+=CRASH REPORT==== 28-Jul-2009::20:20:34 ===
+  crasher:
+    initial call: rb:init/1
+    pid: <0.107.0>
+    registered_name: []
+    exception exit: "cannot read the index file"
+      in function  gen_server:init_it/6
+    ancestors: [sasl_sup,<0.33.0>]
+    messages: []
+    links: [<0.35.0>]
+    dictionary: []
+    trap_exit: true
+    status: running
+    heap_size: 233
+    stack_size: 24
+    reductions: 268
+  neighbours:
+
+=CRASH REPORT==== 28-Jul-2009::20:20:39 ===
+  crasher:
+    initial call: rb:init/1
+    pid: <0.109.0>
+    registered_name: []
+    exception exit: "cannot read the index file"
+      in function  gen_server:init_it/6
+    ancestors: [sasl_sup,<0.33.0>]
+    messages: []
+    links: [<0.35.0>]
+    dictionary: []
+    trap_exit: true
+    status: running
+    heap_size: 233
+    stack_size: 24
+    reductions: 270
+  neighbours:

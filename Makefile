@@ -1,75 +1,57 @@
-# leave these lines alone
+-include Makefile.config
 
-ERL = erl -boot start_clean 
+VER=1.0
 
-EBIN = ./ebin
-EBIN_TEST = ./ebin/test
-EBIN_MOCHIWEB = ./3rd/mochiweb/ebin
-ESRC = ./src/main
-ESRC_TEST = ./src/test
+SHELL=/bin/sh
+PEASY_LIB=./lib/peasy-1.0
+MOCHIWEB_LIB=./lib/mochiweb
+all: libs
 
-BIN = ./bin
-RELEASE = ./release
-CONFIG = ./config
-INC = ./include 
-CC = erlc -I ${INC} -W0
-
-SRC			=	$(wildcard $(ESRC)/*.erl)
-SRC_TEST	=	$(wildcard $(ESRC_TEST)/*.erl)
-
-TARGET		=	$(addsuffix .beam, $(basename \
-				$(addprefix $(EBIN)/, $(notdir $(SRC)))))
-				
-TARGET_TEST =	$(addsuffix .beam, $(basename \
-				$(addprefix $(EBIN_TEST)/, $(notdir $(SRC_TEST)))))
-             
-all: dirs mochiweb ${TARGET} test
-	cp peasy.app $(EBIN)
+libs:
+	cd lib/peasy-1.0 && $(MAKE)
+	cd lib/mochiweb && $(MAKE)
 	
-test: ${TARGET_TEST}
-	@echo Running dialyzer...
-	@dialyzer ebin/.dialyzer_plt --src -I ${INC} -r src/main/
-	
-	@echo Running test suite...
-	@erl -pa $(EBIN) -pa $(EBIN_TEST) -noshell -s all_tests test -s init stop
+test:
+	cd lib/peasy-1.0 && $(MAKE) test
 
-release: all test
-	mkdir -p $(RELEASE)
-	mkdir -p $(RELEASE)/log
-	cp -R $(EBIN) $(RELEASE)/
-	cp -R $(CONFIG) $(RELEASE)/
-	cp -R $(BIN) $(RELEASE)/
-	cp -R $(EBIN_MOCHIWEB) $(RELEASE)/ebin/mochiweb
-	
-# run development version
-run: ${TARGET}
-	erl -boot start_sasl -config  $(CONFIG)/cfg_dev -pa $(EBIN) -pa $(EBIN_MOCHIWEB) -s peasy start
-	
-# run qa
-run_qa: ${TARGET}
-	erl -boot start_sasl -config  $(CONFIG)/cfg_qa -detached -pa $(EBIN) -pa $(EBIN_MOCHIWEB) -s peasy start
+dialyzer: libs
+	$(DIALYZER) $(DIALYZER_OPTS) --verbose -I $(PEASY_LIB)/include -r $(PEASY_LIB)/ebin
 
-docs:
-	erl -noshell -s edoc files ${MODS:%=%.erl} -s init stop
+dialyzer-succ: libs
+	$(DIALYZER) --verbose --succ_typings -I $(PEASY_LIB)/include -r $(PEASY_LIB)
 
-dirs:
-	@echo "Creating dirs ..." 
-	@mkdir -p  ${EBIN} ${EBIN_TEST} 
-	
-$(EBIN)/%.beam: $(ESRC)/%.erl 
-	@echo  "Compiling  $< ... "
-	@$(CC) -o $(EBIN) $<
+#db is new each time, so sjip this
+#run-create-db: libs 
+#	erl -noinput $(ERL_FLAGS) -pa $(PEASY_LIB)/ebin \
+#	-config $(PEASY_LIB)/priv/peasy.config \
+#	-sname peasy -s peasy db_create_schema
 
-$(EBIN_TEST)/%.beam: $(ESRC_TEST)/%.erl
-	@echo "Compiling test $< ... "
-	@$(CC) +debug_info -o $(EBIN_TEST) $<
-	
-# remove all the code
+run: libs
+	erl $(ERL_FLAGS) \
+	-pa $(PEASY_LIB)/ebin \
+	-pa $(MOCHIWEB_LIB)/ebin \
+	-config $(PEASY_LIB)/priv/peasy.config \
+	-sname peasy -s peasy start
 
-mochiweb:
-	@echo Building mochiweb...
-	@cd 3rd/mochiweb && make
+tracer:
+	erl -pa $(PEASY_LIB)/ebin -noinput \
+	-sname tracer -s tr client
 
-clean:	
-	rm -rf $(EBIN)/*.beam $(EBIN_TEST)/*.beam erl_crash.dump
-	rm -rf $(RELEASE)
+clean:
+	cd lib/peasy-1.0 && $(MAKE) clean
+	cd lib/mochiweb && $(MAKE) clean
+
+install:
+	mkdir -p $(RELEASE_PREFIX)/lib/peasy-1.0
+	for i in src ebin include priv; do \
+		cp -r $(PEASY_LIB)/$$i $(RELEASE_PREFIX)/lib/peasy-$(VER) ; \
+		cp -r $(MOCHIWEB_LIB)/$$1 $(RELEASE_PREFIX)/lib/mochiweb ; \
+	done
+
+	mkdir -p $(BIN_PREFIX)
+	sed -e "s|%%%PATHS%%%|-pa $(RELEASE_PREFIX)/lib/peasy-$(VER)/ebin -pa $(RELEASE_PREFIX)/lib/peasy-$(VER)/ebin|;" \
+	    -e "s|%%%CONFIGFILE%%%|$(RELEASE_PREFIX)/lib/peasy-$(VER)/priv/peasy.config|;" \
+	    -e "s|%%%ERL_FLAGS%%%|\"$(ERL_FLAGS)\"|" < ./bin/peasyctl.in > $(BIN_PREFIX)/peasyctl
+	chmod +x $(BIN_PREFIX)/peasyctl
+
+
