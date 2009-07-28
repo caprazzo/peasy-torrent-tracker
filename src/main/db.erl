@@ -40,6 +40,7 @@ shutdown() ->
 
 %% A peer is announcing his new state.
 %% This operation is asynchronous, gen_server:cast returns immediately
+
 announce(Peer) ->
 	gen_server:cast({global, ?MODULE},{announce,Peer}).
 
@@ -66,6 +67,7 @@ handle_call({status, InfoHash}, _From, _State) ->
 		{atomic,[#torrent{complete=Complete, incomplete=Incomplete, downloaded=Downloaded}]} ->
 			{reply, {torrent_status, Complete, Incomplete, Downloaded}, _State}
 	end;
+
 handle_call({peer_list, InfoHash, _Num}, _From, _State) ->
 	Q = qlc:q([IpPort || #peer{peer_key={Hash,_},ip_port=IpPort}<-mnesia:table(peer), Hash=:=InfoHash]),
 	F = fun() -> qlc:e(Q) end,
@@ -74,7 +76,6 @@ handle_call({peer_list, InfoHash, _Num}, _From, _State) ->
 			{reply, {torrent_peers, Peers}, _State}
 	end.
 	
-
 %% This group of receive_announce uses header pattern matching to determine what kind of event
 %% is being announced and what is the state of the peer relatively to one torrent (record #torr).
 
