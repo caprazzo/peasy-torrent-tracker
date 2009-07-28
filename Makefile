@@ -27,6 +27,9 @@ all: dirs mochiweb ${TARGET} test
 	cp peasy.app $(EBIN)
 	
 test: ${TARGET_TEST}
+	@echo Running dialyzer...
+	@dialyzer ebin/.dialyzer_plt --src -I ${INC} -r src/main/
+	
 	@echo Running test suite...
 	@erl -pa $(EBIN) -pa $(EBIN_TEST) -noshell -s all_tests test -s init stop
 
