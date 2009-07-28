@@ -15,8 +15,9 @@ start() ->
 	application:start(?MODULE).
 
 start(_Type, _Args) ->
+	io:format("Peasy.erl: start Type:~p Args:~pn",[_Type, _Args]),
 	peasy_supervisor:start_link(_Args),
-	gen_event:add_handler({local, announce_manager}, db_announce_handler, []).
+	gen_event:add_handler(announce_manager, db_announce_handler, []).
 
 stop() ->
 	application:stop(?MODULE).

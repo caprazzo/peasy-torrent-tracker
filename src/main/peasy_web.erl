@@ -36,7 +36,7 @@ dispatch_requests(HttpRequest, Conf) ->
 handle_announce(ClientIp, HttpParams, {Interval, MinInterval, InfoMod}) ->
 		Req = parse_req(ClientIp, HttpParams),
 		Peer = Req#req.peer,
-		%gen_event:notify({local, announce_manager}, {announce, Peer}),
+		gen_event:notify(announce_manager, {announce, Peer}),
 		
 		{InfoHash, _PeerId} = Peer#peer.peer_key,
 		

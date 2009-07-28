@@ -1,8 +1,10 @@
 -module(torrent_info).
 
+%% @doc torrent_info is a proxy gen_server to the database module.
+%% provides access to torrent status and peers
+
 -behviour(gen_server).
-%% @doc torrent_info is a local gen_server read torrent
-%% statistics (complete,incomplete,downloaded).
+
 
 %% API
 -export([start_link/1, shutdown/0, status/1, peers/2]).
