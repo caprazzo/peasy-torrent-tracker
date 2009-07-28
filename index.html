@@ -5,77 +5,66 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-	<title>mcaprari/peasy-torrent-tracker @ GitHub</title>
+	<title>Peasy, torrent tracker</title>
 	
 	<style type="text/css">
-		body {
+	body {
   		margin-top: 1.0em;
-  		background-color: #00d185;
-		  font-family: "helvetica"; 
-  		color: #ffffff;
+  		background-color: white;
+		font-family: "helvetica"; 
     }
     #container {
       margin: 0 auto;
       width: 700px;
     }
-		h1 { font-size: 3.8em; color: #ff2e7a; margin-bottom: 3px; }
-		h1 .small { font-size: 0.4em; }
-		h1 a { text-decoration: none }
-		h2 { font-size: 1.5em; color: #ff2e7a; }
-    h3 { text-align: center; color: #ff2e7a; }
-    a { color: #ff2e7a; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-		pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
+	h1 { font-size: 3.8em; color: black; margin-bottom: 3px; }
+	
+	a:visited { color:blue; }
+	pre {  padding: 15px;}
+   
 	</style>
 	
 </head>
 
 <body>
-peasy
-  <a href="http://github.com/mcaprari/peasy-torrent-tracker"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-  
-  <div id="container">
-
-    <div class="download">
-      <a href="http://github.com/mcaprari/peasy-torrent-tracker/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/mcaprari/peasy-torrent-tracker/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
-    </div>
-      
-    <h1><a href="http://github.com/mcaprari/peasy-torrent-tracker">peasy-torrent-tracker</a> 
-      <span class="small">by <a href="http://github.com/mcaprari">mcaprari</a></span></h1>
-
-    <div class="description">
-      A torrent tracker written in erlang
-    </div>
-
-    <h2>Authors</h2>
-<p>mcaprari<br/><br/>      </p>
-<h2>Contact</h2>
-<p> (matteo.caprari@gmail.com)<br/>      </p>
-
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/mcaprari/peasy-torrent-tracker/zipball/master">zip</a> or
-      <a href="http://github.com/mcaprari/peasy-torrent-tracker/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/mcaprari/peasy-torrent-tracker</pre>
-    </p>
-      
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/mcaprari/peasy-torrent-tracker">mcaprari/peasy-torrent-tracker</a>
-    </div>
+  <a href="http://github.com/mcaprari/peasy-torrent-tracker">
+	<img style="position: absolute; top: 0; right: 0; border: 0;"
+	src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" />
+  </a> 
+<pre>
+	<h1>Peasy, torrent tracker.</h1>
+	<em>
+		A bittorrent tracker is a server that assists in the
+		communication between peers using the bittorrent protocol<a href="http://en.wikipedia.org/wiki/BitTorrent_tracker">...</a>
+	</em>
+		
+	* <u>Peasy is a pure tracker</u>: it offers <b>no content management</b>
+	  features. <b>No registration</b> of .torrent files.
+	  <b>No authorization</b> schemes. 
+	
+	* <u>Peasy is fast</u>; an effort is made to make peasy <b>very efficient</b>.
+	  Often it will <b>trade consistency for speed</b>.
+	  The goal is to handle <b>hundreds of thousands</b> of downloads a day 
+	  with <b>negligible</b> load.
+	  
+	* <u>Peasy is scalabale</u> and can run in a <b>distributed environment</b>;
+	  the application core is composed of several processes that do not share memory,
+	  so each process can run on a different machine; most of this
+	  processes can also be instantiated mutiple times on several machines. 
+	  
+	* Peasy is <u>written in Erlang</u> following the principles of Erlang <u>Open Telecom Platform</u> (OTP).
+	  
+	  
+    You can download this project in either <a href="http://github.com/mcaprari/peasy-torrent-tracker/zipball/master">zip</a> or <a href="http://github.com/mcaprari/peasy-torrent-tracker/tarball/master">tar</a> formats,
+    clone the project with <a href="http://git-scm.com">Git</a> by running:
+    $ git clone git://github.com/mcaprari/peasy-torrent-tracker
+	
+    or browse the source code at <a href="http://github.com/mcaprari/peasy-torrent-tracker">mcaprari/peasy-torrent-tracker</a>
     
-  </div>
-
-  
+    -- 
+    :Matteo Caprari
+    matteo.caprari@gmail.com
+  </pre>
+ 
 </body>
 </html>
