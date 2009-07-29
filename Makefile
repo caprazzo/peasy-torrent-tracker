@@ -41,7 +41,7 @@ clean:
 	cd lib/peasy-1.0 && $(MAKE) clean
 	cd lib/mochiweb && $(MAKE) clean
 
-install:
+release:
 	mkdir -p $(RELEASE_PREFIX)/lib/peasy-1.0
 	for i in src ebin include priv; do \
 		cp -r $(PEASY_LIB)/$$i $(RELEASE_PREFIX)/lib/peasy-$(VER) ; \
