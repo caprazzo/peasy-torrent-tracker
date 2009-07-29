@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Most of this file was taken from the ejabberd project and then changed
+# Most of this file was taken from the etorrent project and then changed
 #  until it matched what we had as a goal
 
 NODE=peasy
@@ -11,9 +11,9 @@ CONFIGFILE=%%%CONFIGFILE%%%
 ERL_FLAGS=%%%ERL_FLAGS%%%
 
 start () {
-    erl ${ERL_FLAGS} -sname ${NODE}@${HOST} ${PATHS} \
-	-config ${CONFIGFILE} -noshell -noinput -detached \
-	-s peasy start -cookie peasy
+    erl ${ERL_FLAGS}  ${PATHS} \
+	-config ${CONFIGFILE}  -detached -noshell -noinput \
+	-s peasy start -sname peasy -cookie peasy -sname peasy_main@localhost
 }
 
 debug () {
@@ -23,9 +23,10 @@ debug () {
 }
 
 ctl () {
-    erl -noinput -sname etorrentctl@${HOST} \
-	-pa ${BEAMDIR} \
-	-s peasy_ctl start ${NODE}@${HOST} $@
+    erl -noinput -detached -noshell -sname etorrentctl@${HOST} \
+    -cookie peasy \
+	${PATHS} \
+	-s peasy stop peasy_main@localhost
 }
 
 usage () {

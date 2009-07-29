@@ -1,24 +1,26 @@
 -include Makefile.config
 
-VER=1.0
-
 SHELL=/bin/sh
-PEASY_LIB=./lib/peasy-1.0
+PEASY_LIB=./lib/peasy
+PEASY_PLT=$(PEASY_LIB)/dialyzer_plt
 MOCHIWEB_LIB=./lib/mochiweb
 all: libs
 
 libs:
-	cd lib/peasy-1.0 && $(MAKE)
-	cd lib/mochiweb && $(MAKE)
+	cd $(PEASY_LIB) && $(MAKE)
+	cd $(MOCHIWEB_LIB) && $(MAKE)
 	
-test:
-	cd lib/peasy-1.0 && $(MAKE) test
+test: all
+	cd $(PEASY_LIB) && $(MAKE) test
 
-dialyzer: libs
-	$(DIALYZER) $(DIALYZER_OPTS) --verbose -I $(PEASY_LIB)/include -r $(PEASY_LIB)/ebin
+$(PEASY_PLT):
+	$(DIALYZER) $(DIALYZER_OPTS) --build_plt --output_plt $(PEASY_PLT) --verbose -I $(PEASY_LIB)/include -r $(DIALYZER_BUILD_PATHS) $(PEASY_LIB)/ebin 
 
-dialyzer-succ: libs
-	$(DIALYZER) --verbose --succ_typings -I $(PEASY_LIB)/include -r $(PEASY_LIB)
+dialyzer: libs $(PEASY_PLT)
+	$(DIALYZER) $(DIALYZER_OPTS) --plt $(PEASY_PLT) --verbose -I $(PEASY_LIB)/include -r $(PEASY_LIB)/ebin
+
+dialyzer-succ: libs $(PEASY_PLT)
+	$(DIALYZER) --plt $(PEASY_PLT) --verbose --succ_typings -I $(PEASY_LIB)/include -r $(PEASY_LIB)
 
 #db is new each time, so sjip this
 #run-create-db: libs 
@@ -28,9 +30,9 @@ dialyzer-succ: libs
 
 run: libs
 	erl $(ERL_FLAGS) \
+	-boot start_sasl \
 	-pa $(PEASY_LIB)/ebin \
 	-pa $(MOCHIWEB_LIB)/ebin \
-	-config $(PEASY_LIB)/priv/peasy.config \
 	-sname peasy -s peasy start
 
 tracer:
@@ -38,18 +40,18 @@ tracer:
 	-sname tracer -s tr client
 
 clean:
-	cd lib/peasy-1.0 && $(MAKE) clean
-	cd lib/mochiweb && $(MAKE) clean
+	cd $(PEASY_LIB) && $(MAKE) clean
+	cd $(MOCHIWEB_LIB) && $(MAKE) clean
 
 release:
-	mkdir -p $(RELEASE_PREFIX)/lib/peasy-1.0
+	mkdir -p $(RELEASE_PREFIX)/lib/peasy-$(VER)/log
 	for i in src ebin include priv; do \
 		cp -r $(PEASY_LIB)/$$i $(RELEASE_PREFIX)/lib/peasy-$(VER) ; \
 		cp -r $(MOCHIWEB_LIB)/$$1 $(RELEASE_PREFIX)/lib/mochiweb ; \
 	done
 
 	mkdir -p $(BIN_PREFIX)
-	sed -e "s|%%%PATHS%%%|-pa $(RELEASE_PREFIX)/lib/peasy-$(VER)/ebin -pa $(RELEASE_PREFIX)/lib/peasy-$(VER)/ebin|;" \
+	sed -e "s|%%%PATHS%%%|-pa $(RELEASE_PREFIX)/lib/peasy-$(VER)/ebin -pa $(RELEASE_PREFIX)/lib/mochiweb/ebin|;" \
 	    -e "s|%%%CONFIGFILE%%%|$(RELEASE_PREFIX)/lib/peasy-$(VER)/priv/peasy.config|;" \
 	    -e "s|%%%ERL_FLAGS%%%|\"$(ERL_FLAGS)\"|" < ./bin/peasyctl.in > $(BIN_PREFIX)/peasyctl
 	chmod +x $(BIN_PREFIX)/peasyctl
