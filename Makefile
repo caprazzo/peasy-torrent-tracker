@@ -48,7 +48,8 @@ clean:
 	cd $(LOG4ERL_LIB) && $(MAKE) clean
 
 release:
-	mkdir -p $(RELEASE_PREFIX)/log
+	mkdir -p $(RELEASE_PREFIX)
+	mkdir -p $(RELEASE_PREFIX)/log $(RELEASE_PREFIX)/lib
 	cp -r config $(RELEASE_PREFIX)/
 	for i in src ebin include priv; do \
 		cp -r $(PEASY_LIB)/$$i $(RELEASE_PREFIX)/lib/peasy-$(VER) ; \
