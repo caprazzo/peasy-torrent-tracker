@@ -4,11 +4,13 @@ SHELL=/bin/sh
 PEASY_LIB=./lib/peasy
 PEASY_PLT=$(PEASY_LIB)/dialyzer_plt
 MOCHIWEB_LIB=./lib/mochiweb
+LOG4ERL_LIB=./lib/log4erl
 all: libs
 
 libs:
-	cd $(PEASY_LIB) && $(MAKE)
+	cd $(LOG4ERL_LIB) && $(MAKE)
 	cd $(MOCHIWEB_LIB) && $(MAKE)
+	cd $(PEASY_LIB) && $(MAKE)
 	
 test: all
 	cd $(PEASY_LIB) && $(MAKE) test
@@ -33,6 +35,7 @@ run: libs
 	-boot start_sasl \
 	-pa $(PEASY_LIB)/ebin \
 	-pa $(MOCHIWEB_LIB)/ebin \
+	-pa $(LOG4ERL_LIB)/ebin \
 	-sname peasy -s peasy start
 
 tracer:
@@ -42,17 +45,20 @@ tracer:
 clean:
 	cd $(PEASY_LIB) && $(MAKE) clean
 	cd $(MOCHIWEB_LIB) && $(MAKE) clean
+	cd $(LOG4ERL_LIB) && $(MAKE) clean
 
 release:
-	mkdir -p $(RELEASE_PREFIX)/lib/peasy-$(VER)/log
+	mkdir -p $(RELEASE_PREFIX)/log
+	cp -r config $(RELEASE_PREFIX)/
 	for i in src ebin include priv; do \
 		cp -r $(PEASY_LIB)/$$i $(RELEASE_PREFIX)/lib/peasy-$(VER) ; \
 		cp -r $(MOCHIWEB_LIB)/$$1 $(RELEASE_PREFIX)/lib/mochiweb ; \
+		cp -r $(LOG4ERL_LIB)/$$1 $(RELEASE_PREFIX)/lib/log4erl ; \
 	done
 
 	mkdir -p $(BIN_PREFIX)
-	sed -e "s|%%%PATHS%%%|-pa $(RELEASE_PREFIX)/lib/peasy-$(VER)/ebin -pa $(RELEASE_PREFIX)/lib/mochiweb/ebin|;" \
-	    -e "s|%%%CONFIGFILE%%%|$(RELEASE_PREFIX)/lib/peasy-$(VER)/priv/peasy.config|;" \
+	sed -e "s|%%%PATHS%%%|-pa peasy/lib/peasy-$(VER)/ebin -pa peasy/lib/mochiweb/ebin -pa peasy/lib/log4erl/ebin|;" \
+	    -e "s|%%%CONFIGFILE%%%|peasy/lib/peasy-$(VER)/priv/peasy.config|;" \
 	    -e "s|%%%ERL_FLAGS%%%|\"$(ERL_FLAGS)\"|" < ./bin/peasyctl.in > $(BIN_PREFIX)/peasyctl
 	chmod +x $(BIN_PREFIX)/peasyctl
 
