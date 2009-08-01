@@ -9,21 +9,22 @@ HOST=localhost
 PATHS="%%%PATHS%%%"
 CONFIGFILE=%%%CONFIGFILE%%%
 ERL_FLAGS=%%%ERL_FLAGS%%%
-
+#-config ${CONFIGFILE}  -detached -noshell -noinput \
 start () {
     erl ${ERL_FLAGS}  ${PATHS} \
-	-config ${CONFIGFILE}  -detached -noshell -noinput \
+    -boot start_sasl  -config ${CONFIGFILE} \
+    -detached -noshell -noinput \
 	-s peasy start -sname peasy -cookie peasy -sname peasy_main@localhost
 }
 
 debug () {
-    erl -sname debug${NODE}@${HOST} \
-	-pa ${BEAMDIR} \
-	-remsh ${NODE}@${HOST}
+    erl -sname debug_peasy@$localhost \
+	${PATHS} \
+	-cookie peasy -remsh peasy_main@localhost
 }
 
 ctl () {
-    erl -noinput -detached -noshell -sname etorrentctl@${HOST} \
+    erl ${ERL_FLAGS} -noinput -detached -noshell -sname peasy_main@localhost \
     -cookie peasy \
 	${PATHS} \
 	-s peasy stop peasy_main@localhost
