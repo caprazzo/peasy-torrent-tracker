@@ -7,7 +7,6 @@ init(_Args) ->
 	{ok, []}.
 
 handle_event({announce, Peer}, State) ->
-	io:format("Db Event announce/~p.~n", [Peer]),
 	db:announce(Peer),
 	{ok, State}.
 

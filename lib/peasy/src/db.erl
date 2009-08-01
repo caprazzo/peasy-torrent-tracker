@@ -62,12 +62,14 @@ handle_cast({announce, Peer}, _State) ->
 handle_cast(stop, State) ->
   {stop, normal, State}.
 
+%% @doc Returns the state of all torrents in the system
 handle_call(statuses, _From, _State) ->
 	Q = qlc:q([X||X<-mnesia:table(torrent)]),
 	F = fun() -> qlc:e(Q) end,
 	{atomic, Result} = mnesia:transaction(F),
 	{reply, Result, _State};
 
+%% @doc returns the state of a single torrent in the system
 handle_call({status, InfoHash}, _From, _State) ->
 	F = fun() -> mnesia:read({torrent, InfoHash}) end,
 	case mnesia:transaction(F) of
@@ -78,6 +80,7 @@ handle_call({status, InfoHash}, _From, _State) ->
 			{reply, {torrent_status, Complete, Incomplete, Downloaded}, _State}
 	end;
 
+%% @doc returns the list of all peers of a single torrent
 handle_call({peer_list, InfoHash, _Num}, _From, _State) ->
 	Q = qlc:q([IpPort || #peer{peer_key={Hash,_},ip_port=IpPort}<-mnesia:table(peer), Hash=:=InfoHash]),
 	F = fun() -> qlc:e(Q) end,
@@ -89,11 +92,12 @@ handle_call({peer_list, InfoHash, _Num}, _From, _State) ->
 %% This group of receive_announce uses header pattern matching to determine what kind of event
 %% is being announced and what is the state of the peer relatively to one torrent (record #torr).
 
-%% Peer starts and is a seeder.
+%% Seeder is starting
 %% update: complete+1
 %% create: complete=1
+%% Note that a seeder announcing multiple starts will increase seeder
+%% count anyway.
 receive_announce(#peer{last_event=started,left=0, peer_key={InfoHash, _PeerId}}=Peer) ->
-	io:format("XPeer: ~p~n",[Peer]),
 	fun() ->
 		case mnesia:read({torrent, InfoHash}) of
 			[] -> mnesia:write(#torrent{complete=1, info_hash = InfoHash});		  
@@ -103,12 +107,13 @@ receive_announce(#peer{last_event=started,left=0, peer_key={InfoHash, _PeerId}}=
 		mnesia:write(Peer)
 	end;
 
-%% Peer starts and is a leecher.
+%% Leecher is starting
 %% update: incomplete+1 
 %% create: incomplete=1
 %% create or update peer
+%% Note that a leecher announcing multiple starts will increase seeder
+%% count anyway.
 receive_announce(#peer{last_event=started, peer_key={InfoHash, _PeerId}}=Peer) ->
-	io:format("Peer: ~p~n",[Peer]),
 	fun() ->
 		case mnesia:read({torrent, InfoHash}) of
 			[] -> mnesia:write(#torrent{incomplete=1, info_hash = InfoHash});
@@ -123,7 +128,6 @@ receive_announce(#peer{last_event=started, peer_key={InfoHash, _PeerId}}=Peer) -
 %% create: empty
 %% delete peer
 receive_announce(#peer{last_event=stopped, left=0, peer_key={InfoHash, _PeerId}}=Peer) ->
-	io:format("Stop Peer: ~p~n",[Peer]),
 	fun() ->
 		case mnesia:read({torrent, InfoHash}) of
 			[] -> mnesia:write(#torrent{info_hash = InfoHash});
@@ -133,7 +137,7 @@ receive_announce(#peer{last_event=stopped, left=0, peer_key={InfoHash, _PeerId}}
 		mnesia:delete({peer, Peer#peer.peer_key})
 	end;
 
-%% Peer is stopping and is a leecher.
+%% Leecher is stopping
 %% update: incomplete-1
 %% create: empty
 %% delete peer
@@ -197,7 +201,6 @@ receive_announce(#peer{peer_key={InfoHash, _PeerId}}=Peer) ->
 				})
 		end
 	end.
-
 
 dump() ->
 	Qp = qlc:q([ Peer || Peer <- mnesia:table(peer)]),

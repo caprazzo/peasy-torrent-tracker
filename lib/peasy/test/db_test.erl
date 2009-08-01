@@ -34,7 +34,7 @@ known_seeder_starts_again_test() ->
 	t(fun() ->
 		db:announce((?PEER)#peer{last_event=started, left=0}),
 		db:announce((?PEER)#peer{last_event=started, left=0}),
-		?assertEqual({torrent_status, 1,0,0}, db:torrent_status("InfoHash")),
+		?assertEqual({torrent_status, 2,0,0}, db:torrent_status("InfoHash")),
 		?assertEqual({torrent_peers, [?IP_PORT_A]}, db:torrent_peers("InfoHash", 100))
 	end).
 
@@ -49,14 +49,13 @@ known_leecher_starts_again_test() ->
 	t(fun() ->
 		db:announce((?PEER)#peer{last_event=started, left=100}),
 		db:announce((?PEER)#peer{last_event=started, left=100}),
-		?assertEqual({torrent_status, 0,1,0}, db:torrent_status("InfoHash")),
+		?assertEqual({torrent_status, 0,2,0}, db:torrent_status("InfoHash")),
 		?assertEqual({torrent_peers, [?IP_PORT_A]}, db:torrent_peers("InfoHash", 100))
 	end).
 
 unknown_seeder_stops_test() ->
 	t(fun() ->
 		db:announce((?PEER)#peer{last_event=stopped, left=0}),
-		db:announce((?PEER)#peer{last_event=started, left=100}),
 		?assertEqual({torrent_status, 0,0,0}, db:torrent_status("InfoHash")),
 		?assertEqual({torrent_peers, []}, db:torrent_peers("InfoHash", 100))
 	end).

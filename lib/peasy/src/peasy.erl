@@ -12,6 +12,8 @@ start() ->
 	%% 2: is it a good idea to start mnesia hidden in db_setup?
 	%% 3: is db_setup a good idea? Look good in development, but what about production?
 	db_setup:setup(),
+	application:start(log4erl),
+	log4erl:conf("config/log4erl.conf"),
 	application:start(?MODULE).
 
 start(_Type, _Args) ->

@@ -19,8 +19,8 @@ start_link(Port) ->
 
 init([Port]) ->
 	process_flag(trap_exit, true),
-	%gen_event:start_link({global, announce_manager})
 	gen_event:add_handler({global, announce_manager}, db_announce_handler, []),
+	gen_event:add_handler({global, announce_manager}, log_announce_handler, []),
 	db_setup:setup(),
 	io:format("~p (~p) starting...~n", [?MODULE, self()]),
 	InfoMod = torrent_info,
