@@ -48,6 +48,9 @@ clean:
 	cd $(LOG4ERL_LIB) && $(MAKE) clean
 
 release:
+	cd build; ./make_build.sh
+	
+release:
 	mkdir -p $(RELEASE_PREFIX)
 	mkdir -p $(RELEASE_PREFIX)/log $(RELEASE_PREFIX)/lib
 	cp -r config $(RELEASE_PREFIX)/

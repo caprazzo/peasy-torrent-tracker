@@ -3,7 +3,7 @@
 {application, log4erl,
 [{description, "Logger for erlang in the spirit of Log4J"},
  {vsn, "0.8.6"},
- {modules, [log4erl]},
+ {modules, [log4erl, log4erl_sup, log4erl_lex]},
  {registered,[log4erl]},
  {applications, [kernel,stdlib]},
  {mod, {log4erl,[default_logger]}},
