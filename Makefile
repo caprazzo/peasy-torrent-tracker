@@ -48,23 +48,7 @@ clean:
 	cd $(LOG4ERL_LIB) && $(MAKE) clean
 
 release:
-	cd build; ./make_build.sh
+	cd build && ./make_build.sh
 	
-release:
-	mkdir -p $(RELEASE_PREFIX)
-	mkdir -p $(RELEASE_PREFIX)/log $(RELEASE_PREFIX)/lib
-	cp -r config $(RELEASE_PREFIX)/
-	for i in src ebin include priv; do \
-		cp -r $(PEASY_LIB)/$$i $(RELEASE_PREFIX)/lib/peasy-$(VER) ; \
-		cp -r $(MOCHIWEB_LIB)/$$1 $(RELEASE_PREFIX)/lib/mochiweb ; \
-		cp -r $(LOG4ERL_LIB)/$$1 $(RELEASE_PREFIX)/lib/log4erl ; \
-	done
-
-	mkdir -p $(BIN_PREFIX)
-	sed -e "s|%%%PATHS%%%|-pa peasy/lib/peasy-$(VER)/ebin -pa peasy/lib/mochiweb/ebin -pa peasy/lib/log4erl/ebin|;" \
-	    -e "s|%%%CONFIGFILE%%%|peasy/lib/peasy-$(VER)/priv/peasy.config|;" \
-	    -e "s|%%%ERL_FLAGS%%%|\"$(ERL_FLAGS)\"|" < ./bin/peasyctl.in > $(BIN_PREFIX)/peasyctl
-	chmod +x $(BIN_PREFIX)/peasyctl
-
 
 

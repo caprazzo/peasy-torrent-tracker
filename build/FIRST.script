@@ -1,4 +1,4 @@
-%% script generated at {2009,8,2} {19,41,44}
+%% script generated at {2009,8,3} {9,37,35}
 {script,
     {"peasy","1.0"},
     [{preLoaded,
@@ -54,7 +54,8 @@
           mnesia_sp,mnesia_subscr,mnesia_sup,mnesia_text,mnesia_tm]},
      {path,["$ROOT/lib/peasy-1.0/ebin"]},
      {primLoad,
-         [db,db_setup,peasy_supervisor,peasy_web,rest_interface,torrent_info]},
+         [db,db_setup,peasy,peasy_supervisor,peasy_web,rest_interface,
+          torrent_info]},
      {path,["$ROOT/lib/mochiweb-0.01/ebin"]},
      {primLoad,
          [mochifmt,mochifmt_records,mochifmt_std,mochihex,mochijson,
@@ -225,8 +226,8 @@
                    {vsn,"1.0"},
                    {id,[]},
                    {modules,
-                       [peasy_web,db,db_setup,peasy_supervisor,rest_interface,
-                        torrent_info]},
+                       [peasy,peasy_web,db,db_setup,peasy_supervisor,
+                        rest_interface,torrent_info]},
                    {registered,
                        [peasy_web,db,announce_manager,rest_interface,
                         torrent_info]},
