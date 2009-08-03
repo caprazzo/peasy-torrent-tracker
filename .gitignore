@@ -3,3 +3,5 @@ releases/
 releases/1.0
 releases/*
 releases/*.*
+build/FIRST
+erl_crash.dump
